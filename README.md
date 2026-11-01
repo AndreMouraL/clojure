@@ -1,7 +1,6 @@
 # Todo List em Clojure/ClojureScript
 
-**Aluno(a):** [SEU NOME COMPLETO]
-
+**Aluno(a):**  André Moura Lima e Arthur Sampaio Pereira
 **Tutorial original:** https://lambdageo-edu.github.io/lambdageo-tutorials/clojure/
 ("Tutorial Clojure/ClojureScript: Construindo uma Aplicação Persistente e Reativa")
 
