@@ -1,0 +1,29 @@
+{
+  "name": "clojure",
+  "version": "1.0.0",
+  "description": "**Aluno(a):** [SEU NOME COMPLETO]",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreMouraL/clojure.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AndreMouraL/clojure/issues"
+  },
+  "homepage": "https://github.com/AndreMouraL/clojure#readme",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "shadow-cljs": "^2.28.23"
+  }
+}
