@@ -1,0 +1,38 @@
+
+# requirements.txt - Todo List Clojure/ClojureScript
+# Estado atual: ate a Fase 3 (frontend com estado local)
+#
+# OBS: este arquivo e apenas documentacao. As dependencias sao
+# instaladas automaticamente por:
+#   - deps.edn      -> clj -M:run          (bibliotecas Clojure)
+#   - package.json  -> npm install         (bibliotecas JavaScript)
+
+
+# --- Ferramentas a instalar na maquina ---
+Java JDK            >= 11   (17 ou 21 recomendado)
+Clojure CLI         >= 1.11 (clj / clojure)
+Node.js             >= 18   (inclui o npm)
+Git                 qualquer versao recente
+
+# --- Dependencias Clojure (deps.edn) ---
+org.clojure/clojure       1.11.1
+ring/ring-core            1.12.2
+ring/ring-jetty-adapter   1.12.2
+ring/ring-json            0.5.1
+metosin/reitit-ring       0.7.0
+thheller/shadow-cljs      2.28.23
+reagent/reagent           2.0.0
+
+# --- Dependencias JavaScript (package.json) ---
+shadow-cljs               2.28.23   (mesma versao do deps.edn!)
+react                     19.2.0
+react-dom                 19.2.0
+
+# --- Portas usadas ---
+3000   backend (API)
+8000   frontend (shadow-cljs)
+
+# --- Comandos ---
+npm install
+clj -M:run                      # Terminal 1: backend
+npx shadow-cljs watch app       # Terminal 2: frontend
