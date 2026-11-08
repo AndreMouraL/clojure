@@ -42,3 +42,22 @@
       ;; Erro de validação.
       {:status 400 ;; "Bad Request"
        :body {:error "O 'título' (title) é obrigatório"}})))
+
+;; --- Handler para Alternar Status (Toggle) ---
+(defn toggle-todo-handler
+  [request]
+  (let [id (Integer/parseInt (get-in request [:path-params :id]))
+        updated-todo (db/toggle-todo! id)]
+    (if updated-todo
+      {:status 200
+       :body updated-todo}
+      {:status 404
+       :body {:error "Tarefa não encontrada"}})))
+
+;; --- Handler para Deletar Todo ---
+(defn delete-todo-handler
+  [request]
+  (let [id (Integer/parseInt (get-in request [:path-params :id]))]
+    (db/delete-todo! id)
+    {:status 200
+     :body {:message "Tarefa removida com sucesso"}}))
