@@ -47,9 +47,9 @@ seguindo um histórico de commits incremental.
 | 1 | Servidor "Hello World" com Jetty e Reitit | ✅ Concluída |
 | 2 | API REST de `todos` com banco em memória (atom) | ✅ Concluída |
 | 3 | UI do frontend com estado local (Reagent) | ✅ Concluída |
-| 4 | Conexão do frontend com a API (CORS corrigido) | ⏳ Pendente |
-| 5 | Persistência com SQLite (`next.jdbc`) | ⏳ Pendente |
-| 6 | Toggle e delete (CRUD completo) | ⏳ Pendente |
+| 4 | Conexão do frontend com a API (CORS corrigido) | ✅ Concluída |
+| 5 | Persistência com SQLite (`next.jdbc`) | ✅ Concluída |
+| 6 | Toggle e delete (CRUD completo) | ✅ Concluída |
 
 ## Estrutura do projeto
 
@@ -59,6 +59,7 @@ seguindo um histórico de commits incremental.
 ├── shadow-cljs.edn               # configuração do build do frontend
 ├── package.json                  # dependências npm (shadow-cljs, react)
 ├── requirements.txt              # resumo dos requisitos do projeto
+├── todo.db                       # banco de dados SQLite
 ├── resources/public/
 │   ├── index.html                # página base do frontend
 │   └── style.css                 # estilos (opcional)
@@ -66,9 +67,9 @@ seguindo um histórico de commits incremental.
     ├── backend/
     │   ├── core.clj              # servidor, rotas e middlewares
     │   ├── handler.clj           # handlers HTTP
-    │   └── db.clj                # banco de dados (atual: em memória)
+    │   └── db.clj                # banco de dados (SQLite com next.jdbc)
     └── frontend/
-        └── core.cljs             # interface Reagent
+        └── core.cljs             # interface Reagent integrada a API REST
 ```
 
 ## Pré-requisitos
@@ -118,6 +119,8 @@ Servidor em `http://localhost:3000`.
 | GET | `/api/hello` | Retorna `Hello, World!` |
 | GET | `/api/todos` | Lista todos os todos |
 | POST | `/api/todos` | Cria um todo (`title` obrigatório; retorna 400 se vazio) |
+| PUT | `/api/todos/:id` | Alterna o status da tarefa (completed 0 <-> 1) |
+| DELETE | `/api/todos/:id` | Deleta uma tarefa por ID |
 
 Exemplos:
 
@@ -127,6 +130,10 @@ curl http://localhost:3000/api/todos
 curl -X POST http://localhost:3000/api/todos \
      -H "Content-Type: application/json" \
      -d '{"title": "Estudar Clojure"}'
+
+curl -X PUT http://localhost:3000/api/todos/1
+
+curl -X DELETE http://localhost:3000/api/todos/1
 ```
 
 No PowerShell:
@@ -144,9 +151,11 @@ O repositório segue a convenção [Conventional Commits](https://www.convention
 2. `feat: implementa servidor 'Hello World' com Jetty e Reitit`
 3. `feat: implementa API REST de 'todos' com banco em memória`
 4. `feat: implementa UI do frontend com estado local (sem API)`
-5. *(pendente)* conexão do frontend com a API
-6. *(pendente)* persistência com SQLite
-7. *(pendente)* toggle e delete
+5. `feat: implementa persistencia SQLite com next.jdbc para as tarefas`
+6. `feat: inicializa tabela SQLite no bootstrap e conecta handlers a persistencia`
+7. `feat: adiciona endpoints de toggle e delete para as tarefas`
+8. `feat: conecta Reagent a API REST backend para listar e criar tarefas`
+9. `feat: adiciona acoes de toggle e delete integradas a API REST`
 
 ## Licença
 
