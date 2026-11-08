@@ -5,6 +5,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.cors :refer [wrap-cors]]
+            [todo.backend.db :as db]
             [todo.backend.handler :as handler])
   (:gen-class))
 
@@ -63,5 +64,6 @@
 (defn -main [& args]
   ;; Permite passar a porta como argumento (ex: clj -M:run 8080)
   ;; ou usa "3000" como padrão.
+  (db/init-db!)
   (let [port (Integer/parseInt (or (first args) "3000"))]
     (start-server port)))

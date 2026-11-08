@@ -34,7 +34,7 @@
     ;; É uma boa prática validar os dados que chegam.
     (if (and title (not (str/blank? title)))
       ;; Sucesso! Os dados são válidos.
-      (let [new-todo (db/create-todo todo-data)]
+      (let [new-todo (db/create-todo! title)]
         ;; :status 201 = "Created"
         {:status 201
          :body new-todo})
