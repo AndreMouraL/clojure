@@ -4,8 +4,16 @@
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [todo.backend.handler :as handler])
   (:gen-class))
+
+;; Helper para aplicar o wrap-cors com os parâmetros necessários no Reitit
+(defn wrap-cors-middleware [handler-fn]
+  (wrap-cors handler-fn
+             :access-control-allow-origin [#".*"]
+             :access-control-allow-methods [:get :post :put :delete :options]
+             :access-control-allow-headers ["Content-Type"]))
 
 ;; --- 1. Definição das Rotas ---
 (def app-routes
@@ -27,7 +35,10 @@
    ;; --- A "Linha de Montagem" de Middlewares ---
    ;; A requisição percorre o vetor DE CIMA PARA BAIXO até chegar
    ;; ao handler; a resposta volta DE BAIXO PARA CIMA.
-   {:middleware [;; 1. Converte a *resposta* (nosso mapa) em JSON
+   {:middleware [;; 0. Permite requisições Cross-Origin (CORS) do Frontend
+                 wrap-cors-middleware
+                 
+                 ;; 1. Converte a *resposta* (nosso mapa) em JSON
                  wrap-json-response
 
                  ;; 2. Converte o *corpo* da requisição (JSON)
