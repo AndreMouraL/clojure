@@ -37,6 +37,22 @@
           (.catch (fn [err]
                     (js/console.error "Erro ao adicionar tarefa:" err)))))))
 
+(defn toggle-todo-api [id]
+  (-> (js/fetch (str api-url "/" id)
+                #js {:method "PUT"})
+      (.then (fn [res] (.json res)))
+      (.then (fn [_] (fetch-todos!)))
+      (.catch (fn [err]
+                (js/console.error "Erro ao alternar status da tarefa:" err)))))
+
+(defn delete-todo-api [id]
+  (-> (js/fetch (str api-url "/" id)
+                #js {:method "DELETE"})
+      (.then (fn [res] (.json res)))
+      (.then (fn [_] (fetch-todos!)))
+      (.catch (fn [err]
+                (js/console.error "Erro ao deletar tarefa:" err)))))
+
 ;; --- Componentes ---
 
 ;; O Formulário (conectado ao app-state)
@@ -56,20 +72,41 @@
     {:on-click adicionar-todo-api}
     "Adicionar"]])
 
+(defn todo-item [todo]
+  [:li.todo-item
+   {:style {:display "flex"
+            :align-items "center"
+            :justify-content "space-between"
+            :padding "8px 0"
+            :border-bottom "1px solid #eee"}}
+   [:div {:style {:display "flex" :align-items "center" :gap "10px"}}
+    [:input {:type "checkbox"
+             :checked (boolean (:completed todo))
+             :on-change #(toggle-todo-api (:id todo))}]
+    [:span {:style {:text-decoration (if (:completed todo) "line-through" "none")
+                    :color (if (:completed todo) "#888" "#000")}}
+     (:title todo)]]
+   [:button {:on-click #(delete-todo-api (:id todo))
+             :style {:background "#ff4d4f"
+                     :color "white"
+                     :border "none"
+                     :padding "4px 8px"
+                     :border-radius "4px"
+                     :cursor "pointer"}}
+    "Excluir"]])
+
 ;; A Lista (lê diretamente do app-state)
 (defn todo-list []
   (if (:loading? @app-state)
-    [:p "A carregar tarefas..."]
-    [:ul.todo-list
+    [:p "Carregando tarefas..."]
+    [:ul.todo-list {:style {:list-style "none" :padding 0}}
      (for [todo (:todos @app-state)]
        ^{:key (:id todo)}
-       [:li.todo-item
-        {:style {:text-decoration (if (:completed todo) "line-through" "none")}}
-        (:title todo)])]))
+       [todo-item todo])]))
 
 ;; O App Principal
 (defn app []
-  [:div.todo-app
+  [:div.todo-app {:style {:max-width "500px" :margin "40px auto" :font-family "sans-serif"}}
    [:h1 "Todo App (ClojureScript + SQLite)"]
    [todo-form]
    [todo-list]])
