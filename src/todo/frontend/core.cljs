@@ -54,7 +54,7 @@
    [:button
     ;; (Ação): o on-click chama nossa lógica local
     {:on-click adicionar-todo-api}
-    "Adicionar (Local)"]])
+    "Adicionar"]])
 
 ;; A Lista (lê diretamente do app-state)
 (defn todo-list []
