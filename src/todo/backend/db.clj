@@ -1,41 +1,44 @@
 (ns todo.backend.db
-  "Este namespace gerencia os dados dos 'todos' em memória.")
+  "Este namespace gerencia os dados dos 'todos' em memória."
+  (:require [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as rs]))
 
-;; (def) cria uma 'var' global.
-;; (atom {}) cria nossa "caixa" (atom) e coloca
-;; um mapa imutável vazio {} dentro dela.
-(def todos-db (atom {}))
-;; Nosso banco terá a forma: {1 {:id 1, :title "..."}, 2 {:id 2, ...}}
+;; Especificação da conexão SQLite (cria/usa o arquivo todo.db na raiz do projeto)
+(def db-spec {:dbtype "sqlite" :dbname "todo.db"})
 
-;; Uma "caixa" separada para o contador de IDs.
-;; Começa em 0: cada novo todo recebe o valor já incrementado (1, 2, 3...).
-(def next-id (atom 0))
+;; Criação da tabela de tarefas caso ainda não exista
+(defn init-db! []
+  (jdbc/execute!
+   db-spec
+   ["CREATE TABLE IF NOT EXISTS todos (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       title TEXT NOT NULL,
+       completed BOOLEAN NOT NULL DEFAULT 0
+     )"]))
 
-;; --- Nossas Funções de Acesso ao Banco ---
+;; Buscar todas as tarefas
+(defn get-all-todos []
+  (jdbc/execute!
+   db-spec
+   ["SELECT id, title, completed FROM todos ORDER BY id ASC"]
+   {:builder-fn rs/as-unqualified-maps}))
 
-(defn get-all-todos
-  "Retorna uma lista com todos os 'todos' no banco."
-  []
-  ;; @todos-db: "olha dentro" da caixa (lê o valor).
-  ;; (vals): pega apenas os valores do mapa (ignora as chaves/IDs).
-  (vec (vals @todos-db)))
+;; Inserir uma nova tarefa
+(defn create-todo! [title]
+  (jdbc/execute-one!
+   db-spec
+   ["INSERT INTO todos (title, completed) VALUES (?, 0) RETURNING id, title, completed" title]
+   {:builder-fn rs/as-unqualified-maps}))
 
-(defn create-todo
-  "Cria um novo 'todo', salva no banco e o retorna."
-  [todo-data] ;; ex: {:title "Minha tarefa"}
-  (let [;; 1. Gera o próximo ID: swap! incrementa a caixa e DEVOLVE
-        ;;    o novo valor, tudo em um único passo atômico.
-        id (swap! next-id inc)
+;; Alternar status de concluído (toggle)
+(defn toggle-todo! [id]
+  (jdbc/execute-one!
+   db-spec
+   ["UPDATE todos SET completed = CASE WHEN completed = 1 THEN 0 ELSE 1 END WHERE id = ? RETURNING id, title, completed" id]
+   {:builder-fn rs/as-unqualified-maps}))
 
-        ;; 2. Cria um NOVO mapa imutável com os dados completos
-        new-todo (assoc todo-data
-                        :id id
-                        :completed false
-                        :created-at (str (java.time.Instant/now)))]
-
-    ;; 3. (swap!): "troca" o conteúdo da caixa 'todos-db',
-    ;;    aplicando 'assoc' ao mapa antigo para criar um novo.
-    (swap! todos-db assoc id new-todo)
-
-    ;; 4. Retorna o 'todo' recém-criado.
-    new-todo))
+;; Deletar uma tarefa por ID
+(defn delete-todo! [id]
+  (jdbc/execute!
+   db-spec
+   ["DELETE FROM todos WHERE id = ?" id]))
