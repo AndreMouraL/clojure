@@ -73,27 +73,28 @@
     "Adicionar"]])
 
 (defn todo-item [todo]
-  [:li.todo-item
-   {:style {:display "flex"
-            :align-items "center"
-            :justify-content "space-between"
-            :padding "8px 0"
-            :border-bottom "1px solid #eee"}}
-   [:div {:style {:display "flex" :align-items "center" :gap "10px"}}
-    [:input {:type "checkbox"
-             :checked (boolean (:completed todo))
-             :on-change #(toggle-todo-api (:id todo))}]
-    [:span {:style {:text-decoration (if (:completed todo) "line-through" "none")
-                    :color (if (:completed todo) "#888" "#000")}}
-     (:title todo)]]
-   [:button {:on-click #(delete-todo-api (:id todo))
-             :style {:background "#ff4d4f"
-                     :color "white"
-                     :border "none"
-                     :padding "4px 8px"
-                     :border-radius "4px"
-                     :cursor "pointer"}}
-    "Excluir"]])
+  (let [completed? (= 1 (:completed todo))]
+    [:li.todo-item
+     {:style {:display "flex"
+              :align-items "center"
+              :justify-content "space-between"
+              :padding "8px 0"
+              :border-bottom "1px solid #eee"}}
+     [:div {:style {:display "flex" :align-items "center" :gap "10px"}}
+      [:input {:type "checkbox"
+               :checked completed?
+               :on-change #(toggle-todo-api (:id todo))}]
+      [:span {:style {:text-decoration (if completed? "line-through" "none")
+                      :color (if completed? "#888" "#000")}}
+       (:title todo)]]
+     [:button {:on-click #(delete-todo-api (:id todo))
+               :style {:background "#ff4d4f"
+                       :color "white"
+                       :border "none"
+                       :padding "4px 8px"
+                       :border-radius "4px"
+                       :cursor "pointer"}}
+      "Excluir"]]))
 
 ;; A Lista (lê diretamente do app-state)
 (defn todo-list []
