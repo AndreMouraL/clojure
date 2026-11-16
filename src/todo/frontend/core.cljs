@@ -17,7 +17,7 @@
   (-> (js/fetch api-url)
       (.then (fn [res] (.json res)))
       (.then (fn [data]
-               (let [todos (js->clj (.-todos data) :keywordize-keys true)]
+               (let [parsed (js->clj data :keywordize-keys true) todos (:todos parsed)]
                  (swap! app-state assoc :todos todos :loading? false))))
       (.catch (fn [err]
                 (js/console.error "Erro ao carregar tarefas:" err)
